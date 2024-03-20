@@ -131,6 +131,7 @@
 	</dependencyManagement>
 
 	<build>
+		<finalName>my-ecommerce-app</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -138,5 +139,8 @@
 			</plugin>
 		</plugins>
 	</build>
+	
 
 </project>
+
+
