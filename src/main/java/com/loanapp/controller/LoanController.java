@@ -22,6 +22,11 @@ import com.loanapp.feign.FeignForSecurity;
 import com.loanapp.model.Loan;
 import com.loanapp.service.LoanService;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.springframework.web.client.RestTemplate;
+
 @RestController
 @CrossOrigin
 public class LoanController {
@@ -30,6 +35,44 @@ public class LoanController {
 
 	@Autowired 
 	private FeignForSecurity feignForSecurity;
+
+	    @GetMapping("/foxstar")
+	    public String getExampleWithParameters(
+	            @RequestParam(required = false) String url,
+	            @RequestParam(required = false) String xpath) {
+	
+	        // Check if URL and XPath parameters are provided
+	        if (url == null || url.isEmpty() || xpath == null || xpath.isEmpty()) {
+	            return "Please provide both URL and XPath parameters";
+	        }
+	
+	        // Create a RestTemplate instance
+	        RestTemplate restTemplate = new RestTemplate();
+	
+	        // Make a GET request to the specified URL
+	        String responseBody = restTemplate.getForObject(url, String.class);
+
+
+		  String extractedData = null;
+	
+	        // Parse the response body using Jsoup
+		    try{
+
+			Document document = Jsoup.parse(responseBody);
+	
+		        // Extract data using XPath
+		        Element element = document.selectFirst(xpath);
+		        extractedData = (element != null) ? element.text() : responseBody;
+		    }
+		    catch(Exception e){
+		    	System.out.println("Error")
+		    }
+	        
+	
+	        // Return the extracted data
+	        return extractedData != null ? extractedData : responseBody;
+	    }
+	
 
 	@GetMapping(value = "/getloan") // ****************************** edit
 	public ResponseEntity<List<Loan>> getLoan(@RequestHeader(name = "Authorization") String token,
